@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: monopoly_postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pwd}
+      PGDATA: /data/monopoly/postgres
+    volumes:
+      - postgres:/data/monopoly/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  cache:
+    container_name: monopoly_redis_container
+    image: redis/redis-stack-server:latest
+    environment:
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+    volumes:
+      - cache:/data/monopoly/redis
+    ports:
+      - '6379:6379'
+
+networks:
+  postgres:
+    driver: bridge
+  cache:
+    driver: local
+
+volumes:
+  postgres:
+  cache:
